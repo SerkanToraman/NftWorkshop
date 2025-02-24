@@ -9,3 +9,6 @@ export const EXAMPLE_NFT_TYPE =
 
 export const MINT_CAP_TYPE =
   "0x6ea3918a8b92f4ebaf6ed86cf6ef1e5742faab02b917c3681eff76aad023374c::cap::MintCap";
+
+export const TREASURY_ADDRESS =
+  "0xd1cb71c7e5990542ae1a0c4f403c6e6edbf4e37a076bacde40b1b0ce4906fd01";

@@ -1,5 +1,5 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { PACKAGE_ID, COLLECTION_ID } from "../../constants";
+import { PACKAGE_ID, COLLECTION_ID, TREASURY_ADDRESS } from "../../constants";
 
 export const setNftMintCost = (
   mintCapId: string,
@@ -72,17 +72,14 @@ export const mintAnNft = (mintPrice: string): Transaction => {
 export const claimTreasury = (mintCapId: string): Transaction => {
   const claimTreasuryTx = new Transaction();
 
-  console.log("mintCapId", mintCapId);
-  console.log("COLLECTION_ID", COLLECTION_ID);
-  console.log("PACKAGE_ID", PACKAGE_ID);
-  claimTreasuryTx.moveCall({
+  const resultCoin = claimTreasuryTx.moveCall({
     target: `${PACKAGE_ID}::mint::claim_treasury`,
     arguments: [
       claimTreasuryTx.object(mintCapId),
       claimTreasuryTx.object(COLLECTION_ID),
     ],
   });
-  claimTreasuryTx.setGasBudget(1_000_000);
+  claimTreasuryTx.transferObjects([resultCoin], TREASURY_ADDRESS);
 
   return claimTreasuryTx;
 };

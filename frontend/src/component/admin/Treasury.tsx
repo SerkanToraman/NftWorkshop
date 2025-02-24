@@ -2,12 +2,16 @@
 import { useSuiClient } from "@mysten/dapp-kit";
 import { useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { useCollectionData } from "../../hooks/useCollectionData";
+import { useNftData } from "../../hooks/useNftData";
+import { useQueryClient } from "@tanstack/react-query";
 //Components
 import { Box, Button, Typography } from "@mui/material";
 import { claimTreasury } from "../../utils/contract";
 
 function Treasury({ mintCapId }: { mintCapId: string }) {
+  const queryClient = useQueryClient();
   const { treasury, refetchCollectionData } = useCollectionData();
+  const { refetchNftData } = useNftData();
 
   const client = useSuiClient();
   const { mutate: claimTreasuryTransaction } = useSignAndExecuteTransaction({
@@ -24,6 +28,7 @@ function Treasury({ mintCapId }: { mintCapId: string }) {
 
   const claimTreasuryHandler = async () => {
     const tx = claimTreasury(mintCapId);
+
     claimTreasuryTransaction(
       {
         transaction: tx,
@@ -32,7 +37,10 @@ function Treasury({ mintCapId }: { mintCapId: string }) {
       {
         onSuccess: async (result) => {
           console.log("result", result.objectChanges);
+          await queryClient.invalidateQueries({ queryKey: ["collectionData"] });
+          await queryClient.invalidateQueries({ queryKey: ["nftData"] });
           await refetchCollectionData();
+          await refetchNftData();
         },
       },
     );
